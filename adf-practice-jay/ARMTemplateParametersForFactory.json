@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-practice-jay"
+		},
+		"LS_Azure_Sql_password": {
+			"value": ""
+		},
+		"LS_Para_onprem_sql_password": {
+			"value": ""
+		},
+		"LS_onprem_sql_password": {
+			"value": ""
+		},
+		"LS_para_Azure_Sql_password": {
+			"value": ""
+		},
+		"LS_para_adls_accountKey": {
+			"value": ""
+		},
+		"LS_to_adlsgen2_accountKey": {
+			"value": ""
+		},
+		"LS_Azure_Sql_properties_typeProperties_server": {
+			"value": "sql-server-jay1.database.windows.net"
+		},
+		"LS_Azure_Sql_properties_typeProperties_database": {
+			"value": "sql-db-jay"
+		},
+		"LS_Azure_Sql_properties_typeProperties_userName": {
+			"value": "myserver"
+		},
+		"LS_Para_onprem_sql_properties_typeProperties_server": {
+			"value": "LAPTOP-HB7T2KUN"
+		},
+		"LS_Para_onprem_sql_properties_typeProperties_database": {
+			"value": "@{linkedService().ls_P_database_name}"
+		},
+		"LS_Para_onprem_sql_properties_typeProperties_userName": {
+			"value": "testlogin2"
+		},
+		"LS_RestAPI_properties_typeProperties_url": {
+			"value": "https://data.police.uk/api"
+		},
+		"LS_akv_test_properties_typeProperties_baseUrl": {
+			"value": "https://akv-test-jay.vault.azure.net/"
+		},
+		"LS_onprem_sql_properties_typeProperties_server": {
+			"value": "LAPTOP-HB7T2KUN"
+		},
+		"LS_onprem_sql_properties_typeProperties_database": {
+			"value": "test_db"
+		},
+		"LS_onprem_sql_properties_typeProperties_userName": {
+			"value": "testlogin2"
+		},
+		"LS_para_Azure_Sql_properties_typeProperties_server": {
+			"value": "sql-server-jay1.database.windows.net"
+		},
+		"LS_para_Azure_Sql_properties_typeProperties_database": {
+			"value": "@{linkedService().ls_p_database_name}"
+		},
+		"LS_para_Azure_Sql_properties_typeProperties_userName": {
+			"value": "myserver"
+		},
+		"LS_para_adls_properties_typeProperties_url": {
+			"value": "https://adlsaccjay.dfs.core.windows.net/"
+		},
+		"LS_to_adlsgen2_properties_typeProperties_url": {
+			"value": "https://adlsaccjay.dfs.core.windows.net/"
+		}
+	}
+}
