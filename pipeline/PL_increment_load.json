@@ -1,0 +1,324 @@
+{
+	"name": "PL_increment_load",
+	"properties": {
+		"activities": [
+			{
+				"name": "Read Metadata",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_azure_tableconfig",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "IsActive is 1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Read Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Read Metadata').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().IsActive, true)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "IsActive is 1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('IsActive is 1').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "FullOrIncremental",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().LoadType, 'Full')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Incremental Load",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "SqlServerSource",
+												"sqlReaderQuery": {
+													"value": "SELECT * FROM @{item().SourceTable}\nWHERE @{item().WatermarkColumn} > '@{item().LastWatermarkValue}'",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false,
+												"tableOption": "autoCreate",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_para_onprem_sql",
+												"type": "DatasetReference",
+												"parameters": {
+													"ds_database_name": {
+														"value": "@{item().SourceDatabase}",
+														"type": "Expression"
+													},
+													"ds_table_name": {
+														"value": "@{item().SourceTable}",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "ds_para_azure_sql",
+												"type": "DatasetReference",
+												"parameters": {
+													"ds_database_name": {
+														"value": "@{item().TargetDatabase}",
+														"type": "Expression"
+													},
+													"ds_table_name": {
+														"value": "@{item().TargetTable}",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Update Max Date",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Maxdate",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "LS_para_Azure_Sql",
+											"type": "LinkedServiceReference",
+											"parameters": {
+												"ls_p_database_name": "sql-db-jay"
+											}
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"type": "Query",
+													"text": {
+														"value": "UPDATE Metadata.TableConfig\nSET LastWatermarkValue = '@{activity('Maxdate').output.firstRow.MaxDate}'\nWHERE TargetTable = '@{item().SourceTable}'\n",
+														"type": "Expression"
+													}
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									},
+									{
+										"name": "Maxdate",
+										"type": "Lookup",
+										"dependsOn": [
+											{
+												"activity": "Incremental Load",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "SELECT MAX(@{item().WatermarkColumn}) as MaxDate\nFROM @{item().TargetTable}",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "ds_para_azure_sql",
+												"type": "DatasetReference",
+												"parameters": {
+													"ds_database_name": {
+														"value": "@{item().TargetDatabase}",
+														"type": "Expression"
+													},
+													"ds_table_name": {
+														"value": "@{item().TargetTable}",
+														"type": "Expression"
+													}
+												}
+											}
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Full Load Copy",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "SqlServerSource",
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"preCopyScript": {
+													"value": "TRUNCATE TABLE @{item().TargetTable}",
+													"type": "Expression"
+												},
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false,
+												"tableOption": "autoCreate",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_para_onprem_sql",
+												"type": "DatasetReference",
+												"parameters": {
+													"ds_database_name": {
+														"value": "@item().SourceDatabase",
+														"type": "Expression"
+													},
+													"ds_table_name": {
+														"value": "@item().SourceTable",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "ds_para_azure_sql",
+												"type": "DatasetReference",
+												"parameters": {
+													"ds_database_name": {
+														"value": "@item().TargetDatabase",
+														"type": "Expression"
+													},
+													"ds_table_name": {
+														"value": "@item().TargetTable",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-08-12T11:31:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

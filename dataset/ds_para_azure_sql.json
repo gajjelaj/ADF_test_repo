@@ -1,0 +1,34 @@
+{
+	"name": "ds_para_azure_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_para_Azure_Sql",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ls_p_database_name": {
+					"value": "@dataset().ds_database_name",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ds_database_name": {
+				"type": "string"
+			},
+			"ds_table_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().ds_table_name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

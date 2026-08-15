@@ -1,0 +1,21 @@
+{
+	"name": "LS_onprem_sql",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "LAPTOP-HB7T2KUN",
+			"database": "test_db",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "testlogin2",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkZmI1ZDBiMy0xOGNmLTRhNjUtYTViYy02MDAzNTZkZjY0ZTkiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SH-IR-onprem-sql",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,215 @@
+{
+	"name": "PL_API",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['category']"
+								},
+								"sink": {
+									"name": "category",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location_type']"
+								},
+								"sink": {
+									"name": "location_type",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location']['latitude']"
+								},
+								"sink": {
+									"name": "latitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location']['street']['id']"
+								},
+								"sink": {
+									"name": "Street Id"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location']['street']['name']"
+								},
+								"sink": {
+									"name": "Street Name"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location']['longitude']"
+								},
+								"sink": {
+									"name": "longitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['context']"
+								},
+								"sink": {
+									"name": "context",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['outcome_status']['category']"
+								},
+								"sink": {
+									"name": "outcome_cat",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['outcome_status']['date']"
+								},
+								"sink": {
+									"name": "outcome_date",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['persistent_id']"
+								},
+								"sink": {
+									"name": "persistent_id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"name": "id"
+								}
+							},
+							{
+								"source": {
+									"path": "$['location_subtype']"
+								},
+								"sink": {
+									"name": "location_subtype",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['month']"
+								},
+								"sink": {
+									"name": "month",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_Rest_API",
+						"type": "DatasetReference",
+						"parameters": {
+							"Relative_url": "crimes-street/all-crime?date=2024-01&lat=52.629729&lng=-1.131592"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_API_azure_sql",
+						"type": "DatasetReference",
+						"parameters": {
+							"Table_name": "StreetCrime"
+						}
+					}
+				]
+			},
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_adls_cust",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists",
+						"columnCount",
+						"itemName",
+						"size",
+						"structure"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-08-14T07:08:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,21 @@
+{
+	"name": "DS_adls_Json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_para_adls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "StreetCrime.json",
+				"folderPath": "API",
+				"fileSystem": "bronze"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

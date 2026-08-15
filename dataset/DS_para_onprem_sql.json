@@ -1,0 +1,34 @@
+{
+	"name": "DS_para_onprem_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Para_onprem_sql",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ls_P_database_name": {
+					"value": "@dataset().ds_database_name",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ds_database_name": {
+				"type": "string"
+			},
+			"ds_table_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().ds_table_name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

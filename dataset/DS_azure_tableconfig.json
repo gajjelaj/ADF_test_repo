@@ -1,0 +1,98 @@
+{
+	"name": "DS_azure_tableconfig",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Azure_Sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TableID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SourceServer",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceDatabase",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceSchema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceTable",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SinkFolder",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SinkFileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TargetDatabase",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TargetSchema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TargetTable",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FileFormat",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LoadType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WatermarkColumn",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastWatermarkValue",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			},
+			{
+				"name": "LoadSequence",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreatedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "Metadata",
+			"table": "TableConfig"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

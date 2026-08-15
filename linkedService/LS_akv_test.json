@@ -1,0 +1,11 @@
+{
+	"name": "LS_akv_test",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://akv-test-jay.vault.azure.net/"
+		}
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"name": "adf-practice-jay",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a550ddec-f243-475b-b24e-8d04de4d129f",
+		"tenantId": "243a7d98-dac6-47d2-9df8-6b4794023dc4"
+	}
+}
